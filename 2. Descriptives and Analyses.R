@@ -22,6 +22,7 @@ data1<-  select(rawdata.excl,
                 DP17_01,DP18_01,DP18_02,DP19_01,DP19_02,DP20_01,DP20_02,DP21_01,DP21_02,DP22_01,DP22_02,DP23_01,DP23_02,DP24_01,DP24_02,  #3PPG Round 3.
                 DP25_01,DP26_01,DP26_02,DP27_01,DP27_02,DP28_01,DP28_02,DP29_01,DP29_02,DP30_01,DP30_02,DP31_01,DP31_02,DP32_01,DP32_02,  #3PPG Round 4.
                 DP40_01,DP40_02,DP41_01,DP41_02,DP42_01,DP42_02,DP43_01,DP43_02,  #Rounds Comprehension Checks.
+                T1,T2,T3,T4,Round_Order,  #Rounds Order.
                 TIME_SUM,   #Experiment Duration.
                 KO01_01     #Concentration Items.
 )
@@ -42,7 +43,6 @@ data1$ObserverJS.z <- scale(data1$ObserverJS)[,] #Standardized Observer JS.
 data1$BeneficiaryJS.z <- scale(data1$BeneficiaryJS)[,] #Standardized Beneficiary JS.
 data1$PerpetratorJS.z <- scale(data1$PerpetratorJS)[,]  #Standardized Perpetrator JS.
 
-
 OJSm <- mean(data1$ObserverJS,na.rm=TRUE)
 OJSsd <- sd(data1$ObserverJS,na.rm=TRUE)
 PJSm <- mean(data1$PerpetratorJS,na.rm=TRUE)
@@ -50,35 +50,36 @@ PJSsd <- sd(data1$PerpetratorJS,na.rm=TRUE)
 BJSm <- mean(data1$BeneficiaryJS,na.rm=TRUE)
 BJSsd <- sd(data1$BeneficiaryJS,na.rm=TRUE)
 
-
 data1$ObserverJS.c <- data1$ObserverJS-OJSm
 data1$BeneficiaryJS.c <- data1$BeneficiaryJS-BJSm
 data1$PerpetratorJS.c <- data1$PerpetratorJS-PJSm
 
+##############################################   3PPG: PUNISHMENT/COMPENSATION   ################################################
+#CONTINUOUS.
+#Calculate Total PUNISHMENT/COMPENSATION in each Round across decisions.
+#For Person A allocating from 0 to 4 coins.
+data1$R1<-rowSums(data1[,c('DP02_01','DP03_01','DP04_01','DP05_01','DP06_01')],na.rm = TRUE)
+data1$R2<-rowSums(data1[,c('DP10_01','DP11_01','DP12_01','DP13_01','DP14_01')],na.rm = TRUE)
+data1$R3<-rowSums(data1[,c('DP18_01','DP19_01','DP20_01','DP21_01','DP22_01')],na.rm = TRUE)
+data1$R4<-rowSums(data1[,c('DP26_01','DP27_01','DP28_01','DP29_01','DP30_01')],na.rm = TRUE)
 
-#Calculate Total PUNISHMENT/COMPENSATION in each Round across decisions (*for PUNISHMENT DICHOTOMIZATION).
-data1$R1<-data1$DP02_01+data1$DP03_01+data1$DP04_01+data1$DP05_01+data1$DP06_01
-data1$R2<-data1$DP10_01+data1$DP11_01+data1$DP12_01+data1$DP13_01+data1$DP14_01
-data1$R3<-data1$DP18_01+data1$DP19_01+data1$DP20_01+data1$DP21_01+data1$DP22_01
-data1$R4<-data1$DP26_01+data1$DP27_01+data1$DP28_01+data1$DP29_01+data1$DP30_01
+data1$R1.Comp<-rowSums(data1[,c('DP02_02','DP03_02','DP04_02','DP05_02','DP06_02')],na.rm = TRUE)
+data1$R2.Comp<-rowSums(data1[,c('DP10_02','DP11_02','DP12_02','DP13_02','DP14_02')],na.rm = TRUE)
+data1$R3.Comp<-rowSums(data1[,c('DP18_02','DP19_02','DP20_02','DP21_02','DP22_02')],na.rm = TRUE)
+data1$R4.Comp<-rowSums(data1[,c('DP26_02','DP27_02','DP28_02','DP29_02','DP30_02')],na.rm = TRUE)
 
-data1$R1b<-data1$DP02_01+data1$DP03_01+data1$DP04_01+data1$DP05_01+data1$DP06_01+data1$DP07_01+data1$DP08_01 
-data1$R2b<-data1$DP10_01+data1$DP11_01+data1$DP12_01+data1$DP13_01+data1$DP14_01+data1$DP15_01+data1$DP16_01
-data1$R3b<-data1$DP18_01+data1$DP19_01+data1$DP20_01+data1$DP21_01+data1$DP22_01+data1$DP23_01+data1$DP24_01
-data1$R4b<-data1$DP26_01+data1$DP27_01+data1$DP28_01+data1$DP29_01+data1$DP30_01+data1$DP31_01+data1$DP32_01
+#For Person A allocating from 0 to 6 coins.
+data1$R1b<-rowSums(data1[,c('DP02_01','DP03_01','DP04_01','DP05_01','DP06_01','DP07_01','DP08_01')],na.rm = TRUE)
+data1$R2b<-rowSums(data1[,c('DP10_01','DP11_01','DP12_01','DP13_01','DP14_01','DP15_01','DP16_01')],na.rm = TRUE)
+data1$R3b<-rowSums(data1[,c('DP18_01','DP19_01','DP20_01','DP21_01','DP22_01','DP23_01','DP24_01')],na.rm = TRUE)
+data1$R4b<-rowSums(data1[,c('DP26_01','DP27_01','DP28_01','DP29_01','DP30_01','DP31_01','DP32_01')],na.rm = TRUE)
 
-data1$R1.Comp<-data1$DP02_02+data1$DP03_02+data1$DP04_02+data1$DP05_02+data1$DP06_02
-data1$R2.Comp<-data1$DP10_02+data1$DP11_02+data1$DP12_02+data1$DP13_02+data1$DP14_02
-data1$R3.Comp<-data1$DP18_02+data1$DP19_02+data1$DP20_02+data1$DP21_02+data1$DP22_02
-data1$R4.Comp<-data1$DP26_02+data1$DP27_02+data1$DP28_02+data1$DP29_02+data1$DP30_02
+data1$R1b.Comp<-rowSums(data1[,c('DP02_02','DP03_02','DP04_02','DP05_02','DP06_02','DP07_02','DP08_02')],na.rm = TRUE)
+data1$R2b.Comp<-rowSums(data1[,c('DP10_02','DP11_02','DP12_02','DP13_02','DP14_02','DP15_02','DP16_02')],na.rm = TRUE)
+data1$R3b.Comp<-rowSums(data1[,c('DP18_02','DP19_02','DP20_02','DP21_02','DP22_02','DP23_02','DP24_02')],na.rm = TRUE)
+data1$R4b.Comp<-rowSums(data1[,c('DP26_02','DP27_02','DP28_02','DP29_02','DP30_02','DP31_02','DP32_02')],na.rm = TRUE)
 
-data1$R1b.Comp<-data1$DP02_02+data1$DP03_02+data1$DP04_02+data1$DP05_02+data1$DP06_02+data1$DP07_02+data1$DP08_02 
-data1$R2b.Comp<-data1$DP10_02+data1$DP11_02+data1$DP12_02+data1$DP13_02+data1$DP14_02+data1$DP15_02+data1$DP16_02
-data1$R3b.Comp<-data1$DP18_02+data1$DP19_02+data1$DP20_02+data1$DP21_02+data1$DP22_02+data1$DP23_02+data1$DP24_02
-data1$R4b.Comp<-data1$DP26_02+data1$DP27_02+data1$DP28_02+data1$DP29_02+data1$DP30_02+data1$DP31_02+data1$DP32_02
-
-
-#PUNISHMENT DICHOTOMIZATION.
+#PUNISHMENT: DICHOTOMOUS.
 data1$Punishment.R1<-ifelse(data1$R1>0,1,0)
 data1$Punishment.R2<-ifelse(data1$R2>0,1,0)
 data1$Punishment.R3<-ifelse(data1$R3>0,1,0)
@@ -95,6 +96,7 @@ table(data1$Punishment.R4)
 library(reshape2)
 dich1 <- melt(data1,
               id.vars=c('SD01_01','SD02','SD03_01','SD03_01a','SD04_01',
+                        'T1','T2','T3','T4','Round_Order',
                         "ObserverJS.z","BeneficiaryJS.z","PerpetratorJS.z"), #ID variables - variables to keep but not split apart on.
               measure.vars=c('Punishment.R1','Punishment.R2','Punishment.R3','Punishment.R4'), #Categories.
               variable.name= "Ambiguity", #Name of categorical variable that defines each within-subject condition.
@@ -121,6 +123,7 @@ dichm <- merge(dich1, dich2,by="row.names")
 library(reshape2)
 df1 <- melt(data1,
             id.vars=c('SD01_01','SD02','SD03_01','SD03_01a','SD04_01',
+                      'T1','T2','T3','T4','Round_Order',
                       "ObserverJS.z","BeneficiaryJS.z","PerpetratorJS.z"), #ID variables - variables to keep but not split apart on.
             measure.vars=c('R1','R2','R3','R4'), #Categories.
             variable.name= "Ambiguity", #Name of categorical variable that defines each within-subject condition.
@@ -147,6 +150,7 @@ dm <- merge(df1, df2,by="row.names")
 library(reshape2)
 df3 <- melt(data1,
             id.vars=c('SD01_01','SD02','SD03_01','SD03_01a','SD04_01',
+                      'T1','T2','T3','T4','Round_Order',
                       "ObserverJS.z","BeneficiaryJS.z","PerpetratorJS.z"), #ID variables - variables to keep but not split apart on.
             measure.vars=c('R1.Comp','R2.Comp','R3.Comp','R4.Comp'), #Categories.
             variable.name= "Ambiguity", #Name of categorical variable that defines each within-subject condition.
@@ -269,7 +273,6 @@ library(lattice)
 library(sjPlot)
 
 
-
 ## H1 ## Main effects of Ambiguity and Uncertainty.
 
 H1.RI <- glmer(Punishment.x~Ambiguity + Uncertainty + (1|ID), data=dichm,family = binomial(link = logit))
@@ -295,13 +298,13 @@ sjt.glmer(H1.RI)  #HTML Table of main results.
 
 
 #Random slopes.
-H1.RS1 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Ambiguity|ID), data=dichm,family = binomial(link = logit))
+H1.RS1 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Ambiguity|ID) + (1+Ambiguity|Round_Order), data=dichm,family = binomial(link = logit))
 summary(H1.RS1)
 
-H1.RS2 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Uncertainty|ID), data=dichm,family = binomial(link = logit))
+H1.RS2 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Uncertainty|ID) + (1+Uncertainty|Round_Order), data=dichm,family = binomial(link = logit))
 summary(H1.RS2)
 
-H1.RS3 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Uncertainty+Ambiguity|ID), data=dichm,family = binomial(link = logit))
+H1.RS3 <- glmer(Punishment.x~Ambiguity + Uncertainty + (1+Uncertainty+Ambiguity|ID) + (1+Uncertainty+Ambiguity|Round_Order), data=dichm,family = binomial(link = logit))
 summary(H1.RS3)
 
 anova(H1.RS1,H1.RS2) ##MODEL COMPARISON.
@@ -364,10 +367,15 @@ summary(data1[99:102])
 EP1 <- lmer(Punishment.x~Ambiguity+Uncertainty + (1|ID), data=dm) 
 summary(EP1)
 
-
 EC1 <- lmer(Compensation.x~Ambiguity+Uncertainty + (1|ID), data=dm2) 
 summary(EC1)
 
+#TEST INCLUDING CROSS-LEVEL INTERACTION WITH Random_Order.
+TEST <- lmer(Punishment.x~Ambiguity+Uncertainty + (1|ID+Round_Order), data=dm) 
+summary(TEST)
+TEST <- lmer(Punishment.x~Ambiguity+Uncertainty+Round_Order+Ambiguity*Round_Order+(1+Ambiguity|ID), data=dm) 
+summary(TEST)
+table(data1$Round_Order)
 plot(allEffects(EC1))
 
 
@@ -406,9 +414,9 @@ dm$Uncertainty.c<-revalue(dm$Uncertainty, c('0'='-0.5','1'='0.5'))
 dm2$Ambiguity.c<-revalue(dm2$Ambiguity, c('0'='-0.5','1'='0.5'))
 dm2$Uncertainty.c<-revalue(dm2$Uncertainty, c('0'='-0.5','1'='0.5'))
 
-EP2a.high <- lmer(Punishment.x~Ambiguity.c*HighOJS.c + (1|ID), data=dm) 
+EP2a.high <- lmer(Punishment.x~Ambiguity.c*HighOJS.z + (1|ID), data=dm) 
 summary(EP2a.high)
-EP2a.low <- lmer(Punishment.x~Ambiguity.c*LowOJS.c + (1|ID), data=dm) 
+EP2a.low <- lmer(Punishment.x~Ambiguity.c*LowOJS.z + (1|ID), data=dm) 
 summary(EP2a.low)
 
 EC2a.high <- lmer(Compensation.x~Ambiguity.c*HighOJS.z + (1|ID), data=dm2) 

@@ -3,9 +3,15 @@
 ################################################################################################################################
 
 rawdata <- read.csv("Data Study 4 3PPG Replication.csv",header=TRUE,sep=";",dec=".",na.strings=c("NA","","-9"),row.names=NULL)
+#If it is not specified that DECIMALS are indicated by ",", R will identify variables with commas as FACTORS or CHARACTERS.
+#For transforming from FACTOR to NUMERIC:
+for(i in c(ColumnA:ColumnX)) {                                
+  rawdata.relabel[,i] <- as.numeric(as.character(rawdata.relabel[,i]))
+}
+#IMPORTANT:Sometimes R messes up the values during this transformation. Check whether the frequencies table change.
 
-which(duplicated(rawdata$P_CODE))
 
+#Relabel of variables according to Logfile.
 library(plyr)
 rawdata.relabel <- rename(rawdata,c(
   "DQ01_01"="DQ01",    ## Data Quality ##
@@ -84,13 +90,14 @@ rawdata.relabel <- rename(rawdata,c(
   "DP47_02"="DP32_02"
 ))
 
-#If it is not specified that DECIMALS are indicated by ",", R will identify variables with commas as FACTORS or CHARACTERS.
-#For transforming from FACTOR to NUMERIC:
-for(i in c(ColumnA:ColumnX)) {                                
-  rawdata.relabel[,i] <- as.numeric(as.character(rawdata.relabel[,i]))
-}
-#IMPORTANT:Sometimes R messes up the values during this transformation. Check whether the frequencies table change.
-
+#Creation of Round_Order variable for 3PPG.
+rawdata.relabel$T1 <- substring(rawdata.relabel$IV02_01[],6,7)
+rawdata.relabel$T2 <- substring(rawdata.relabel$IV02_01[],20,21)
+rawdata.relabel$T3 <- substring(rawdata.relabel$IV02_01[],34,35)
+rawdata.relabel$T4 <- substring(rawdata.relabel$IV02_01[],48,49)
+rawdata.relabel$Round_Order <- paste(rawdata.relabel$T1,rawdata.relabel$T2,rawdata.relabel$T3,rawdata.relabel$T4,sep="")
+head(rawdata.relabel$Round_Order)
+head(rawdata.relabel$IV02_01)
 
 ##Self-reported data quality.
 #NOTE: In Exclusion Criteria doc, scale has 6 points. In Soscisurvey, scale goes from 1 to 5.
@@ -134,17 +141,6 @@ R301
 R302
 R401
 R402
-
-
-#### ORDER VARIABLES ####
-#Function for extracting numbers from string character.
-
-Numextract <- function(string){
-  unlist(regmatches(string,gregexpr("[[:digit:]]+\\.*[[:digit:]]*",string)))
-}
-
-rawdata.excl$ORDER <- Numextract(rawdata.excl$IV02_01)
-
 
 #In total AROUND 10 people failed 3PPG attention checks, but were redirected to instructions.
 
