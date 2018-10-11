@@ -29,32 +29,70 @@ dm$AmbDummy_4 <- ifelse(dm$Ambiguity_Order==0,0,
 dm$AmbDummy_5 <- ifelse(dm$Ambiguity_Order==0,0,
                         ifelse(dm$Ambiguity_Order==5,1,NA))
 
+#Effect of Position of specific Rounds.
+#Position R1 - 00
+dm$Position_R1 <- ifelse(dm$T1=="R1"&dm$Uncertainty==0&dm$Ambiguity==0,0,
+                      ifelse(dm$T2=="R1"&dm$Uncertainty==0&dm$Ambiguity==0,1,
+                             ifelse(dm$T3=="R1"&dm$Uncertainty==0&dm$Ambiguity==0,2,
+                                    ifelse(dm$T4=="R1"&dm$Uncertainty==0&dm$Ambiguity==0,3,NA))))
+#Position R2 - 10
+dm$Position_R2 <- ifelse(dm$T1=="R2"&dm$Uncertainty==1&dm$Ambiguity==0,0,
+                         ifelse(dm$T2=="R2"&dm$Uncertainty==1&dm$Ambiguity==0,1,
+                                ifelse(dm$T3=="R2"&dm$Uncertainty==1&dm$Ambiguity==0,2,
+                                       ifelse(dm$T4=="R2"&dm$Uncertainty==1&dm$Ambiguity==0,3,NA))))
+#Position R3 - 01
+dm$Position_R3 <- ifelse(dm$T1=="R3"&dm$Uncertainty==0&dm$Ambiguity==1,0,
+                         ifelse(dm$T2=="R3"&dm$Uncertainty==0&dm$Ambiguity==1,1,
+                                ifelse(dm$T3=="R3"&dm$Uncertainty==0&dm$Ambiguity==1,2,
+                                       ifelse(dm$T4=="R3"&dm$Uncertainty==0&dm$Ambiguity==1,3,NA))))
+
+#Position R4 - 11
+dm$Position_R4 <- ifelse(dm$T1=="R4"&dm$Uncertainty==1&dm$Ambiguity==1,0,
+                         ifelse(dm$T2=="R4"&dm$Uncertainty==1&dm$Ambiguity==1,1,
+                                ifelse(dm$T3=="R4"&dm$Uncertainty==1&dm$Ambiguity==1,2,
+                                       ifelse(dm$T4=="R4"&dm$Uncertainty==1&dm$Ambiguity==1,3,NA))))
+
+dm$Position <- rowSums(dm[c("Position_R1","Position_R2","Position_R3","Position_R4")],na.rm = TRUE)
+dm[c("Position_R1","Position_R2","Position_R3","Position_R4")]<-NULL
+
+
+######################## ANALYSES OF EFFECTS OF ORDER ###############################
+
 #Analyses of effect of Ambiguity_Order on Punishment.
+#Ambiguity as Level 1 Factor, and Order as Level 2 Factor.
 Order_mod <- lmer(Punishment.x~Ambiguity+Ambiguity_Order+Ambiguity*Ambiguity_Order+(1+Ambiguity|ID),data=dm) 
 summary(Order_mod)
-
+#Average Punishment based on Ambiguity Order.
 library(dplyr)
 dm_Order0 <- filter(dm,Ambiguity_Order==0)
-mean(dm_Order0$Punishment.x)
 dm_Order1 <- filter(dm,Ambiguity_Order==1)
-mean(dm_Order1$Punishment.x)
 dm_Order2 <- filter(dm,Ambiguity_Order==2)
-mean(dm_Order2$Punishment.x)
 dm_Order3 <- filter(dm,Ambiguity_Order==3)
-mean(dm_Order3$Punishment.x)
 dm_Order4 <- filter(dm,Ambiguity_Order==4)
-mean(dm_Order4$Punishment.x)
 dm_Order5 <- filter(dm,Ambiguity_Order==5)
+mean(dm_Order0$Punishment.x)
+mean(dm_Order1$Punishment.x)
+mean(dm_Order2$Punishment.x)
+mean(dm_Order3$Punishment.x)
+mean(dm_Order4$Punishment.x)
 mean(dm_Order5$Punishment.x)
 
-
-#Simple effect Analyses.
+#Simple effect Analyses in Orders 1 and 2.
 Order1_mod <- lmer(Punishment.x~Ambiguity+Uncertainty+(1+Ambiguity|ID),data=dm_Order1) 
 summary(Order1_mod)
 Order2_mod <- lmer(Punishment.x~Ambiguity+Uncertainty+(1+Ambiguity|ID),data=dm_Order2) 
 summary(Order2_mod)
 summary(EP1)
 
+#Analysis of Position of Round on Punishment.
+#Position and Ambiguity as Level 1 Factors.
+Position_mod <- lmer(Punishment.x~Ambiguity+Uncertainty+Position+(1|ID),data=dm) 
+summary(Position_mod)
 
-Prediction of non of the dummies significant.
-If significant, run the analysis with that order.
+Position_TEST <- lmer(Punishment.x~Ambiguity*ObserverJS.z+Ambiguity_Order+(1+Ambiguity|ID),data=dm)
+summary(Position_TEST)
+
+Position_mod2 <- lmer(Punishment.x~Ambiguity*ObserverJS.z+Position+(1|ID),data=dm) 
+summary(Position_mod2)
+
+RUN SAME ANALYSES FOR COMPENSATION.
